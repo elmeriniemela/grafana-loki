@@ -20,6 +20,7 @@ services:
     volumes:
       - /var/log:/var/log
       - ./promtail:/etc/promtail
+    restart: unless-stopped
     command: -config.file=/etc/promtail/config.yml
     networks:
       - loki
@@ -31,6 +32,7 @@ services:
     user: "1000"
     volumes:
       - ./grafana:/var/lib/grafana
+    restart: unless-stopped
     ports:
       - "3000:3000"
     networks:
