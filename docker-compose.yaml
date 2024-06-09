@@ -3,6 +3,9 @@ version: "3"
 networks:
   loki:
 
+volumes:
+  prometheus-data:
+
 services:
   loki:
     image: grafana/loki:2.9.4
