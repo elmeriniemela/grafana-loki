@@ -37,3 +37,14 @@ services:
       - "3000:3000"
     networks:
       - loki
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    networks:
+      - loki
