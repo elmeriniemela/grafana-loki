@@ -51,3 +51,16 @@ services:
       - "9090:9090"
     networks:
       - loki
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - '/:/host:ro,rslave'

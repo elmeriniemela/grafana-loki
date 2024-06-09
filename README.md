@@ -7,4 +7,6 @@
 * ln -s /opt/grafana-loki/nginx/* /etc/nginx/sites-enabled/
 * cd /etc/ssl && openssl req -nodes -x509 -new -keyout private/nginx-selfsigned.key -out certs/nginx-selfsigned.crt -days 3650
 * systemctl reload nginx
+* Start: docker compose up -d --force-recreate
+* Stop: docker compose down
 
