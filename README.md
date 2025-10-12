@@ -9,4 +9,5 @@
 * systemctl reload nginx
 * Start: docker compose up -d --force-recreate
 * Stop: docker compose down
+* `cp daemon.json /etc/docker/daemon.json`
 
