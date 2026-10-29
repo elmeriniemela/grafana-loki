@@ -57,6 +57,7 @@ Run as root.
    ufw allow from 172.16.0.0/12 to any port 9100 proto tcp          # node_exporter, scraped by the Prometheus container
    ufw enable
    ```
+   In the Hetzner Cloud console, also attach a firewall to the server with inbound rules allowing only TCP 22 and TCP 443 from any IPv4 and IPv6 address. The Hetzner firewall only filters the public interface, so traffic on the private network is controlled by ufw alone.
 7. Start the stack:
    ```sh
    cd /opt/grafana-loki && docker compose up -d
@@ -68,3 +69,34 @@ Run as root.
 * Start: `docker compose up -d --force-recreate`
 * Stop: `docker compose down`
 * Check that every container has log limits (should show `max-size:10m`): `docker ps -q | xargs docker inspect --format '{{.Name}} {{.HostConfig.LogConfig}}'`
+
+### Upgrading Ubuntu
+
+Ubuntu upgrades one LTS release at a time (e.g. 22.04 → 24.04 → 26.04). Run as root.
+
+1. Take a snapshot of the server in the Hetzner Cloud console, and back up `/opt/grafana-loki/.env` and `/opt/grafana-loki/grafana/grafana.db`.
+2. Disable ufw so the upgrader's fallback SSH server on port 1022 is reachable. The Hetzner firewall still blocks everything except TCP 22 and 443 from the internet:
+   ```sh
+   ufw disable
+   ```
+3. Repeat for each LTS release until the target is reached:
+   ```sh
+   apt update && apt full-upgrade -y
+   reboot
+   do-release-upgrade
+   ```
+   * If the SSH session drops, log in again and run `screen -x` to reattach.
+   * Keep the locally installed version when asked about changed configuration files.
+   * The upgrader disables Docker's apt repository, so Docker stops receiving updates but keeps running. When it offers to remove obsolete packages, review the list and answer No if it contains `docker-ce`, `containerd.io` or `docker-compose-plugin`.
+4. After the last upgrade, set up Docker's apt repository again (https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository), update Docker and re-enable ufw:
+   ```sh
+   apt update && apt upgrade
+   ufw enable
+   ```
+5. Check that everything is running and Grafana shows data from Loki and Prometheus:
+   ```sh
+   lsb_release -a
+   docker compose -f /opt/grafana-loki/docker-compose.yaml ps
+   ufw status
+   nginx -t
+   ```
