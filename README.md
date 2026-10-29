@@ -40,7 +40,7 @@ Run as root.
    cp /opt/grafana-loki/daemon.json /etc/docker/daemon.json
    systemctl restart docker
    ```
-5. Install nginx with a self-signed certificate:
+5. Install nginx with a self-signed certificate. `grafana.eniemela.fi` is proxied by Cloudflare, which provides the public SSL certificate; the self-signed certificate only encrypts traffic between Cloudflare and the server, so the Cloudflare SSL/TLS mode must be "Full" (not "Full (strict)"). `loki.eniemela.fi` resolves to the private address and uses the self-signed certificate directly:
    ```sh
    apt install nginx
    ln -s /opt/grafana-loki/nginx/* /etc/nginx/sites-enabled/
@@ -52,7 +52,7 @@ Run as root.
    ufw default deny incoming
    ufw default allow outgoing
    ufw allow OpenSSH
-   ufw allow 443/tcp                                                # Grafana via nginx
+   ufw allow 443/tcp                                                # Grafana via nginx, proxied by Cloudflare
    ufw allow from 10.0.0.0/24 to any port 3110 proto tcp            # Loki via nginx, for promtail agents on the private network
    ufw allow from 172.16.0.0/12 to any port 9100 proto tcp          # node_exporter, scraped by the Prometheus container
    ufw enable
