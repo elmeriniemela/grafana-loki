@@ -31,6 +31,7 @@ services:
   grafana:
     environment:
       - GF_PATHS_CONFIG=/var/lib/grafana/grafana.ini
+    env_file: .env
     image: grafana/grafana:latest
     user: "1000"
     volumes:
