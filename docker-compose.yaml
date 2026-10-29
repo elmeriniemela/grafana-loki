@@ -13,7 +13,7 @@ services:
       - ./loki:/etc/loki
     restart: unless-stopped
     ports:
-      - "3100:3100"
+      - "127.0.0.1:3100:3100"
     command: -config.file=/etc/loki/config.yml
     networks:
       - loki
@@ -37,7 +37,7 @@ services:
       - ./grafana:/var/lib/grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     networks:
       - loki
 
@@ -48,7 +48,7 @@ services:
       - prometheus-data:/prometheus
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     networks:
       - loki
 
